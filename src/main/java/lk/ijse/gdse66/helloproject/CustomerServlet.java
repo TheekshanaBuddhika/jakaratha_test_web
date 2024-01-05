@@ -1,5 +1,9 @@
 package lk.ijse.gdse66.helloproject;
 
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebInitParam;
@@ -79,18 +83,18 @@ public class CustomerServlet extends HttpServlet {
             connection = DriverManager.getConnection(url,username,password);
             Statement stm = connection.createStatement();
             ResultSet rs = stm.executeQuery("select * from customer");
-            String JsonArray = "";
+
+            JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+
             while (rs.next()) {
                 String id = rs.getString("id");
                 String name = rs.getString("name");
                 String address = rs.getString("address");
                 System.out.println(id + " " + name + " " + address);
-                String jsonobj = "{\"id\": \""+id +"\","+"\"name\":\""+name+"\","+"\"address\":\""+address + "\"}";
-                JsonArray += jsonobj + ",";
+                arrayBuilder.add(Json.createObjectBuilder().add("id",id).add("name",name).add("address",address).build());
             }
-            JsonArray = "["+JsonArray.substring(0,JsonArray.length()-1)+"]";
-            System.out.println(JsonArray);
-            writer.write(JsonArray);
+
+            resp.getWriter().write(arrayBuilder.build().toString());
             resp.setContentType("application/json");
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
