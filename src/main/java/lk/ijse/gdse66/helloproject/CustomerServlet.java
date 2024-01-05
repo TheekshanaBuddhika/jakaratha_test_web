@@ -9,10 +9,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.sql.*;
 
 @WebServlet(name = "Customer", urlPatterns = "/customers", loadOnStartup = 1, initParams = {
         @WebInitParam(name = "username" , value = "root"),
@@ -73,6 +72,37 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("doget()");
+        PrintWriter writer = resp.getWriter();
+        Connection connection = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(url,username,password);
+            Statement stm = connection.createStatement();
+            ResultSet rs = stm.executeQuery("select * from customer");
+            String JsonArray = "";
+            while (rs.next()) {
+                String id = rs.getString("id");
+                String name = rs.getString("name");
+                String address = rs.getString("address");
+                System.out.println(id + " " + name + " " + address);
+                String jsonobj = "{\"id\": \""+id +"\","+"\"name\":\""+name+"\","+"\"address\":\""+address + "\"}";
+                JsonArray += jsonobj + ",";
+            }
+            JsonArray = "["+JsonArray.substring(0,JsonArray.length()-1)+"]";
+            System.out.println(JsonArray);
+            writer.write(JsonArray);
+            resp.setContentType("application/json");
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException(e);
+        }finally {
+            if(connection !=null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
+
 }
