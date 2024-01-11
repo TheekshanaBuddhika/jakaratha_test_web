@@ -1,9 +1,6 @@
 package lk.ijse.gdse66.helloproject;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonObjectBuilder;
+import jakarta.json.*;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebInitParam;
@@ -40,10 +37,10 @@ public class CustomerServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Connection connection = null;
 
-        /*catch request parameter as a String*/
-        String id = req.getParameter("id");
-        String name = req.getParameter("name");
-        String address = req.getParameter("address");
+        JsonObject object = Json.createReader(req.getReader()).readObject();
+        String id = object.getString("id");
+        String name = object.getString("name");
+        String address = object.getString("address");
 
         System.out.printf("id=%s, name=%s, address=%s\n", id,name,address);
 
@@ -54,8 +51,8 @@ public class CustomerServlet extends HttpServlet {
             PreparedStatement stm = connection.prepareStatement("INSERT INTO customer(id, name, address) VALUES (?,?,?)");
 
             stm.setString(1,id);
-            stm.setString(2, name);
-            stm.setString(3, address);
+            stm.setString(2,name);
+            stm.setString(3,address);
 
             stm.executeUpdate();
         } catch (ClassNotFoundException | SQLException e) {
@@ -93,7 +90,6 @@ public class CustomerServlet extends HttpServlet {
                 System.out.println(id + " " + name + " " + address);
                 arrayBuilder.add(Json.createObjectBuilder().add("id",id).add("name",name).add("address",address).build());
             }
-
             resp.getWriter().write(arrayBuilder.build().toString());
             resp.setContentType("application/json");
         } catch (ClassNotFoundException | SQLException e) {
@@ -109,4 +105,38 @@ public class CustomerServlet extends HttpServlet {
         }
     }
 
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Connection connection = null;
+
+        JsonObject object = Json.createReader(req.getReader()).readObject();
+        String id = object.getString("id");
+        String name = object.getString("name");
+        String address = object.getString("address");
+
+        System.out.printf("id=%s, name=%s, address=%s\n", id,name,address);
+
+        /*create a database connection and save data in database*/
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(url,username,password);
+            PreparedStatement stm = connection.prepareStatement("UPDATE customer SET name = ? , address =? WHERE id = ?");
+
+            stm.setString(1,name);
+            stm.setString(2,address);
+            stm.setString(3,id);
+
+            stm.executeUpdate();
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException(e);
+        }finally {
+            if(connection !=null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
 }
