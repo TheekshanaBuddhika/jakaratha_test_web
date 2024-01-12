@@ -78,6 +78,7 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
         PrintWriter writer = resp.getWriter();
         Connection connection = null;
         try {
@@ -99,7 +100,7 @@ public class CustomerServlet extends HttpServlet {
             }
             jsonb.toJson(customers,writer);
            // resp.getWriter().write(arrayBuilder.build().toString());
-          //  resp.setContentType("application/json");
+
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         }finally {
