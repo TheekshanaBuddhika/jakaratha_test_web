@@ -62,7 +62,13 @@ public class CustomerServlet extends HttpServlet {
             stm.setString(2,name);
             stm.setString(3,address);
 
-            stm.executeUpdate();
+            if(stm.executeUpdate()>0){
+                resp.setStatus(HttpServletResponse.SC_CREATED);
+
+            }else{
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         }finally {
@@ -139,7 +145,12 @@ public class CustomerServlet extends HttpServlet {
             stm.setString(2,address);
             stm.setString(3,id);
 
-            stm.executeUpdate();
+            if(stm.executeUpdate()>0){
+                resp.setStatus(HttpServletResponse.SC_CREATED);
+
+            }else{
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         }finally {
@@ -165,7 +176,12 @@ public class CustomerServlet extends HttpServlet {
             connection = DriverManager.getConnection(url,username,password);
             PreparedStatement stm = connection.prepareStatement("DELETE FROM customer WHERE id = ?");
             stm.setString(1,id);
-            stm.executeUpdate();
+            if(stm.executeUpdate()>0){
+                resp.setStatus(HttpServletResponse.SC_CREATED);
+
+            }else{
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
 
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
