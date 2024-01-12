@@ -14,8 +14,23 @@
         <input id="field2" type ="text" name="name">
         <label for="field3">address</label>
         <input id="field3" type ="text" name="address">
-        <button id="btn" type ="submit">Save</button>
+        <div>
+            <button id="btn" type ="submit">Save</button>
+            <button id="btn2" type ="submit">Update</button>
+            <button id="btn3" type ="submit">Delete</button>
+            <button id="btn4" type ="submit">GetAll</button>
+        </div>
     </form>
+    <table>
+        <thead id="head">
+        <tr>
+            <th>id</th>
+            <th>name</th>
+            <th>address</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 </body>
 
 <style>
@@ -46,6 +61,23 @@
     input { 
         width: 300px;
         height: 20px;
+    }
+
+    table {
+        width: 600px;
+        height: 500px;
+    }
+
+    tbody {
+        background-color: gray;
+    }
+
+    #head{
+        background-color: red;
+    }
+
+    div{
+        margin-top: 10px;
     }
 </style>
 </html>
