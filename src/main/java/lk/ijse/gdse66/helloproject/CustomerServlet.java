@@ -1,6 +1,5 @@
 package lk.ijse.gdse66.helloproject;
 
-import jakarta.json.*;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.servlet.ServletConfig;
@@ -14,7 +13,6 @@ import lk.ijse.gdse66.model.customer;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.sql.*;
 import java.util.ArrayList;
 
