@@ -1,6 +1,8 @@
 package lk.ijse.gdse66.helloproject;
 
 import jakarta.json.*;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebInitParam;
@@ -8,11 +10,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lk.ijse.gdse66.model.customer;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.sql.*;
+import java.util.ArrayList;
 
 @WebServlet(name = "Customer", urlPatterns = "/customers", loadOnStartup = 1, initParams = {
         @WebInitParam(name = "username" , value = "root"),
@@ -37,10 +41,16 @@ public class CustomerServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Connection connection = null;
 
-        JsonObject object = Json.createReader(req.getReader()).readObject();
+       /* JsonObject object = Json.createReader(req.getReader()).readObject();
         String id = object.getString("id");
         String name = object.getString("name");
         String address = object.getString("address");
+*/
+
+        customer customer = JsonbBuilder.create().fromJson(req.getReader(), customer.class);
+        String id = customer.getId();
+        String name = customer.getName();
+        String address = customer.getAddress();
 
         System.out.printf("id=%s, name=%s, address=%s\n", id,name,address);
 
@@ -81,17 +91,20 @@ public class CustomerServlet extends HttpServlet {
             Statement stm = connection.createStatement();
             ResultSet rs = stm.executeQuery("select * from customer");
 
-            JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-
+     //       JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+            ArrayList<customer> customers = new ArrayList<>();
+            Jsonb jsonb = JsonbBuilder.create();
             while (rs.next()) {
                 String id = rs.getString("id");
                 String name = rs.getString("name");
                 String address = rs.getString("address");
                 System.out.println(id + " " + name + " " + address);
-                arrayBuilder.add(Json.createObjectBuilder().add("id",id).add("name",name).add("address",address).build());
+         //       arrayBuilder.add(Json.createObjectBuilder().add("id",id).add("name",name).add("address",address).build());
+                customers.add(new customer(id,name,address));
             }
-            resp.getWriter().write(arrayBuilder.build().toString());
-            resp.setContentType("application/json");
+            jsonb.toJson(customers,writer);
+           // resp.getWriter().write(arrayBuilder.build().toString());
+          //  resp.setContentType("application/json");
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         }finally {
@@ -108,12 +121,16 @@ public class CustomerServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Connection connection = null;
-
+/*
         JsonObject object = Json.createReader(req.getReader()).readObject();
         String id = object.getString("id");
         String name = object.getString("name");
         String address = object.getString("address");
-
+*/
+        customer customer = JsonbBuilder.create().fromJson(req.getReader(), customer.class);
+        String id = customer.getId();
+        String name = customer.getName();
+        String address = customer.getAddress();
         System.out.printf("id=%s, name=%s, address=%s\n", id,name,address);
 
         /*create a database connection and save data in database*/
@@ -145,7 +162,8 @@ public class CustomerServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Connection connection = null;
 
-        String id = Json.createReader(req.getReader()).readObject().getString("id");
+    //    String id = Json.createReader(req.getReader()).readObject().getString("id");
+        String id = JsonbBuilder.create().fromJson(req.getReader(), customer.class).getId();
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
