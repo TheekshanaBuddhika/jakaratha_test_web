@@ -78,9 +78,6 @@ public class CustomerServlet extends HttpServlet {
         }
     }
 
-
-
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter writer = resp.getWriter();
@@ -156,7 +153,6 @@ public class CustomerServlet extends HttpServlet {
             }
         }
     }
-
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
