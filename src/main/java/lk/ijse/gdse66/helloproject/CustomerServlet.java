@@ -37,6 +37,8 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.addHeader("Access-Control-Allow-Origin" , "*");
+
         Connection connection = null;
 
        /* JsonObject object = Json.createReader(req.getReader()).readObject();
@@ -84,7 +86,7 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.addHeader("Access-Control-Allow-Origin" , "http://localhost:63342");
+        resp.addHeader("Access-Control-Allow-Origin" , "*");
         resp.setContentType("application/json");
         PrintWriter writer = resp.getWriter();
         Connection connection = null;
@@ -167,6 +169,7 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.addHeader("Access-Control-Allow-Origin" , "*");
         Connection connection = null;
 
     //    String id = Json.createReader(req.getReader()).readObject().getString("id");
@@ -195,5 +198,12 @@ public class CustomerServlet extends HttpServlet {
                 }
             }
         }
+    }
+
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.addHeader("Access-Control-Allow-Origin" , "*");
+        resp.addHeader("Access-Control-Allow-Headers" , "Content-type");
+        resp.addHeader("Access-Control-Allow-Methods" , "Content-type");
     }
 }
