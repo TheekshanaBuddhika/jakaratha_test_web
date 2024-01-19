@@ -84,6 +84,7 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.addHeader("Access-Control-Allow-Origin" , "http://localhost:63342");
         resp.setContentType("application/json");
         PrintWriter writer = resp.getWriter();
         Connection connection = null;
